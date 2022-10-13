@@ -157,8 +157,8 @@ if __name__ == '__main__':
         experiment.log({
             'learning rate': optimizer.param_groups[0]['lr'],
             'validation psnr': epoch_psnr.avg,
-            'images': wandb.Image(inputs[0].cpu()),
-            'masks': {
+            'LR': wandb.Image(inputs[0].cpu()),
+            'HR': {
                 'true': wandb.Image(labels[0].float().cpu()),
                 'pred': wandb.Image(preds[0].float().cpu()),
             },
