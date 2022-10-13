@@ -34,6 +34,17 @@ python train.py --train-file "path_to_train_file" \
                 --seed 123                
 ```
 
+
+<!-- python train.py --train-file "path_to_train_file" \
+                --eval-file "path_to_eval_file" \
+                --outputs-dir "./outputs" \
+                --scale 3 \
+                --lr 1e-4 \
+                --batch-size 16 \
+                --num-epochs 400 \
+                --num-workers 0 \
+                --seed 123    -->
+
 ## Test
 
 
@@ -42,6 +53,17 @@ python test.py --weights-file "path_to_pth_file" \
                --image-file "path_to_test_image_file" \
                --scale 3
 ```
+
+```bash
+python test.py --weights-file "./outputs/x3/best.pth" \
+               --image-file "./try/butterfly_GT" \
+               --scale 3
+```
+python test.py --weights-file "F:\sensingX\projects\SRCNN_Pytorch_1.0\outputs\x3\best.pth" --image-file "F:\sensingX\projects\SRCNN_Pytorch_1.0\try\butterfly_GT.bmp" --scale 3
+
+python test.py --weights-file "F:\sensingX\projects\SRCNN_Pytorch_1.0\outputs\x3\best.pth" --image-file "F:\sensingX\projects\SRCNN_Pytorch_1.0\try\ppt3.bmp" --scale 3
+
+python test.py --weights-file "F:\sensingX\projects\SRCNN_Pytorch_1.0\outputs\x3\best.pth" --image-file "F:\sensingX\projects\SRCNN_Pytorch_1.0\try\zebra.bmp" --scale 3
 
 ## Results
 

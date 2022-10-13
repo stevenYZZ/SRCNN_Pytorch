@@ -77,7 +77,7 @@ if __name__ == '__main__':
     parser.add_argument('--eval', action='store_true')
     args = parser.parse_args()
 
-    if not args.eval:
-        train(args)
-    else:
-        eval(args)
+    # if not args.eval:
+        # train(args)
+    # else:
+    eval(args)

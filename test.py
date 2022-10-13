@@ -3,6 +3,7 @@ Author  : Xu fuyong
 Time    : created by 2019/7/17 17:41
 
 """
+import os
 import argparse
 
 import torch
@@ -41,7 +42,11 @@ if __name__ == '__main__':
     image = image.resize((image_width, image_height), resample=pil_image.BICUBIC)
     image = image.resize((image.width // args.scale, image.height // args.scale), resample=pil_image.BICUBIC)
     image = image.resize((image.width * args.scale, image.height * args.scale), resample=pil_image.BICUBIC)
-    image.save(args.image_file.replace('.', '_bicubic_x{}.'.format(args.scale)))
+    # 源代码比较智障
+    # 保存时，如果路径中的文件夹包含"."字符，也会被替换，导致报No such file or directory错误
+    # image.save(args.image_file.replace('.', '_bicubic_x{}.'.format(args.scale)))   
+    # exit()
+    image.save(os.path.splitext(args.image_file)[0] + '_bicubic_x{}.bmp'.format(args.scale))
 
     image = np.array(image).astype(np.float32)
     ycbcr = convert_rgb_to_ycbcr(image)
@@ -62,4 +67,7 @@ if __name__ == '__main__':
     output = np.array([preds, ycbcr[..., 1], ycbcr[..., 2]]).transpose([1, 2, 0])
     output = np.clip(convert_ycbcr_to_rgb(output), 0.0, 255.0).astype(np.uint8)
     output = pil_image.fromarray(output)
-    output.save(args.image_file.replace('.', '_srcnn_x{}.'.format(args.scale)))
+    # 源代码比较智障
+    # 保存时，如果路径中的文件夹包含"."字符，也会被替换，导致报No such file or directory错误
+    # output.save(args.image_file.replace('.', '_srcnn_x{}.'.format(args.scale)))
+    output.save(os.path.splitext(args.image_file)[0] + '_srcnn_x{}.bmp'.format(args.scale))
