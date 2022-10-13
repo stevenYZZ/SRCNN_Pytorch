@@ -77,12 +77,9 @@ def val(img_list):
 
     lr_group = h5_file.create_group('lr')
     hr_group = h5_file.create_group('hr')
-
-    total_list = glob.glob('{}/*'.format(images_dir))[30001:]
-    train_index = random.sample(total_list, k=int(total_num * val_percent))  # 从total_list列表中随机抽取k个
     
     with tqdm(total = int(total_num * val_percent)) as pbar:
-        for i, image_path in enumerate(train_index):
+        for i, image_path in enumerate(img_list):
             hr = pil_image.open(image_path).convert('RGB')
             hr_width = (hr.width // scale) * scale
             hr_height = (hr.height // scale) * scale
