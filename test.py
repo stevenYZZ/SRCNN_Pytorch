@@ -12,22 +12,28 @@ import numpy as np
 import PIL.Image as pil_image
 
 from model import SRCNN
-from utils import convert_rgb_to_ycbcr, convert_ycbcr_to_rgb, calc_psnr
+from utils import convert_rgb_to_ycbcr, convert_ycbcr_to_rgb, calc_psnr, combine_test_image
+
+
+input_dir = "./data"
+# image_name = "butterfly_GT.bmp"
+# image_name = "ppt3.bmp"
+image_name = "zebra.bmp"
+model_file = "./outputs/x3/best.pth"
+
+input_file = os.path.join(input_dir, image_name)
+# output_dir = os.path.join(input_dir, "combine")
+scale = 3
+
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--weights-file', type=str, required=True)
-    parser.add_argument('--image-file', type=str, required=True)
-    parser.add_argument('--scale', type=int, default=3)
-    args = parser.parse_args()
-
     cudnn.benchmark = True
     device = torch.device('cuda: 0' if torch.cuda.is_available() else 'cpu')
 
     model = SRCNN().to(device)
 
     state_dict = model.state_dict()
-    for n, p in torch.load(args.weights_file, map_location=lambda storage, loc: storage).items():
+    for n, p in torch.load(model_file, map_location=lambda storage, loc: storage).items():
         if n in state_dict.keys():
             state_dict[n].copy_(p)
         else:
@@ -35,18 +41,15 @@ if __name__ == '__main__':
 
     model.eval()
 
-    image = pil_image.open(args.image_file).convert('RGB')
+    image = pil_image.open(input_file).convert('RGB')
 
-    image_width = (image.width // args.scale) * args.scale
-    image_height = (image.height // args.scale) * args.scale
+    image_width = (image.width // scale) * scale
+    image_height = (image.height // scale) * scale
     image = image.resize((image_width, image_height), resample=pil_image.BICUBIC)
-    image = image.resize((image.width // args.scale, image.height // args.scale), resample=pil_image.BICUBIC)
-    image = image.resize((image.width * args.scale, image.height * args.scale), resample=pil_image.BICUBIC)
-    # 源代码比较智障
-    # 保存时，如果路径中的文件夹包含"."字符，也会被替换，导致报No such file or directory错误
-    # image.save(args.image_file.replace('.', '_bicubic_x{}.'.format(args.scale)))   
-    # exit()
-    image.save(os.path.splitext(args.image_file)[0] + '_bicubic_x{}.bmp'.format(args.scale))
+    image = image.resize((image.width // scale, image.height // scale), resample=pil_image.BICUBIC)
+    image = image.resize((image.width * scale, image.height * scale), resample=pil_image.BICUBIC)
+
+    image.save(os.path.splitext(input_file)[0] + '_bicubic_x{}.bmp'.format(scale))
 
     image = np.array(image).astype(np.float32)
     ycbcr = convert_rgb_to_ycbcr(image)
@@ -67,7 +70,8 @@ if __name__ == '__main__':
     output = np.array([preds, ycbcr[..., 1], ycbcr[..., 2]]).transpose([1, 2, 0])
     output = np.clip(convert_ycbcr_to_rgb(output), 0.0, 255.0).astype(np.uint8)
     output = pil_image.fromarray(output)
-    # 源代码比较智障
-    # 保存时，如果路径中的文件夹包含"."字符，也会被替换，导致报No such file or directory错误
-    # output.save(args.image_file.replace('.', '_srcnn_x{}.'.format(args.scale)))
-    output.save(os.path.splitext(args.image_file)[0] + '_srcnn_x{}.bmp'.format(args.scale))
+    output.save(os.path.splitext(input_file)[0] + '_srcnn_x{}.bmp'.format(scale))
+    
+    # combine图像从左到右依次为输入图(LR)、输出图(predict)、真值图(HR)
+    combine_test_image(input_dir, input_dir, image_name, scale)
+

@@ -2,8 +2,6 @@
 
 This repository is implementation of the ["Image Super-Resolution Using Deep Convolutional Networks"](https://arxiv.org/abs/1501.00092)(SRCNN)by PyTorch.
 
-![](assets/markdown-img-paste-20190716211816899.png)
-
 
 ## Requirements
 
@@ -14,59 +12,23 @@ This repository is implementation of the ["Image Super-Resolution Using Deep Con
 - tqdm 4.30.0
 
 
-## Train
+## I prepare
+- 通过 `python prepare.py` 命令生成训练集和测试集(hdf5文件)
+- 需要准备数据集（高清图像）
+- 如果直接使用datasets文件夹中的样例hdf5文件，则可以跳过此步
+- 相关参数在 prepare.py 文件中修改
 
-The 91-image, Set5 dataset converted to HDF5 can be downloaded from the links below.
-[links:](https://pan.baidu.com/s/11XMR3rjXZuZHWX7yMeAqfw)
-Fetch Code：do34
+## II train
+- 通过 `python train.py` 训练模型
 
-Otherwise, you can use `prepare.py` to create custom dataset.
+- 可以在wandb网站上观察训练过程
+  - https://wandb.ai/
+  - 可能需要登录账号
+- 相关参数在 train.py 文件中修改
 
-```bash
-python train.py --train-file "path_to_train_file" \
-                --eval-file "path_to_eval_file" \
-                --outputs-dir "path_to_outputs_file" \
-                --scale 3 \
-                --lr 1e-4 \
-                --batch-size 16 \
-                --num-epochs 400 \
-                --num-workers 0 \
-                --seed 123                
-```
+## III test
+- 通过 `python test.py` 输入单张HR图片进行测试
+- 输出由HR下采样得到的LR图像(bicubic),模型预测图象(srcnn),合并的combine图像
+- combine图像从左到右依次为LR图像、模型预测图象、HR图像
+- 相关参数在 test.py 文件中修改
 
-
-<!-- python train.py --train-file "path_to_train_file" \
-                --eval-file "path_to_eval_file" \
-                --outputs-dir "./outputs" \
-                --scale 3 \
-                --lr 1e-4 \
-                --batch-size 16 \
-                --num-epochs 400 \
-                --num-workers 0 \
-                --seed 123    -->
-
-## Test
-
-
-```bash
-python test.py --weights-file "path_to_pth_file" \
-               --image-file "path_to_test_image_file" \
-               --scale 3
-```
-
-```bash
-python test.py --weights-file "./outputs/x3/best.pth" \
-               --image-file "./try/butterfly_GT" \
-               --scale 3
-```
-python test.py --weights-file "F:\sensingX\projects\SRCNN_Pytorch_1.0\outputs\x3\best.pth" --image-file "F:\sensingX\projects\SRCNN_Pytorch_1.0\try\butterfly_GT.bmp" --scale 3
-
-python test.py --weights-file "F:\sensingX\projects\SRCNN_Pytorch_1.0\outputs\x3\best.pth" --image-file "F:\sensingX\projects\SRCNN_Pytorch_1.0\try\ppt3.bmp" --scale 3
-
-python test.py --weights-file "F:\sensingX\projects\SRCNN_Pytorch_1.0\outputs\x3\best.pth" --image-file "F:\sensingX\projects\SRCNN_Pytorch_1.0\try\zebra.bmp" --scale 3
-
-## Results
-
-We used the network settings for experiments, i.e., <a href="https://www.codecogs.com/eqnedit.php?latex={&space;f&space;}_{&space;1&space;}=9,{&space;f&space;}_{&space;2&space;}=5,{&space;f&space;}_{&space;3&space;}=5,{&space;n&space;}_{&space;1&space;}=64,{&space;n&space;}_{&space;2&space;}=32,{&space;n&space;}_{&space;3&space;}=1" target="_blank"><img src="https://latex.codecogs.com/gif.latex?{&space;f&space;}_{&space;1&space;}=9,{&space;f&space;}_{&space;2&space;}=5,{&space;f&space;}_{&space;3&space;}=5,{&space;n&space;}_{&space;1&space;}=64,{&space;n&space;}_{&space;2&space;}=32,{&space;n&space;}_{&space;3&space;}=1" title="{ f }_{ 1 }=9,{ f }_{ 2 }=5,{ f }_{ 3 }=5,{ n }_{ 1 }=64,{ n }_{ 2 }=32,{ n }_{ 3 }=1" /></a>.
-
-PSNR was calculated on the Y channel.

@@ -1,3 +1,6 @@
+__pycache__/
 datasets/
 outputs/
 try/
+data/
+wandb/
